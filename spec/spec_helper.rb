@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 $KCODE='u'
 
 ENV['RAILS_ENV'] ||= 'test'
@@ -51,6 +52,13 @@ unless defined?(RAILS_ENV)
     self.use_instantiated_fixtures  = false
     self.pre_loaded_fixtures = false
     fixtures :all
+
+    def setup_fixtures_with_set_fixture_path
+      # ここでなぜか fixture_path の値が変わってしまっています。。。
+      self.class.fixture_path = File.join(File.dirname(__FILE__), 'fixtures')
+      setup_fixtures_without_set_fixture_path
+    end
+    alias_method_chain :setup_fixtures, :set_fixture_path
   end
 
   ActiveRecord::Base.configurations = true

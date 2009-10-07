@@ -1,6 +1,3 @@
-
-puts "stamper #0"
-
 module Ddb #:nodoc:
   module Userstamp
     module Stamper

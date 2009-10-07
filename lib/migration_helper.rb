@@ -1,6 +1,3 @@
-
-puts "migration_helper #0"
-
 module Ddb
   module Userstamp
     module MigrationHelper

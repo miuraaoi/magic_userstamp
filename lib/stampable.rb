@@ -1,3 +1,6 @@
+
+puts "stampable #0"
+
 module Ddb #:nodoc:
   module Userstamp
     # Determines what default columns to use for recording the current stamper.

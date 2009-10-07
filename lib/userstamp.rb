@@ -1,3 +1,8 @@
+
+puts "user_stamp #0"
+
+
+
 module Ddb
   module Controller
     # The Userstamp module, when included into a controller, adds a before filter

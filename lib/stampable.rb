@@ -67,11 +67,11 @@ module Ddb #:nodoc:
         # and <tt>before_create</tt> filters for doing the stamping.
         def stampable(options = {})
           defaults  = {
-                        :stamper_class_name => :user,
-                        :creator_attribute  => Ddb::Userstamp.compatibility_mode ? :created_by : :creator_id,
-                        :updater_attribute  => Ddb::Userstamp.compatibility_mode ? :updated_by : :updater_id,
-                        :deleter_attribute  => Ddb::Userstamp.compatibility_mode ? :deleted_by : :deleter_id
-                      }.merge(options)
+            :stamper_class_name => :user,
+            :creator_attribute  => Ddb::Userstamp.compatibility_mode ? :created_by : :creator_id,
+            :updater_attribute  => Ddb::Userstamp.compatibility_mode ? :updated_by : :updater_id,
+            :deleter_attribute  => Ddb::Userstamp.compatibility_mode ? :deleted_by : :deleter_id
+          }.merge(options)
 
           self.stamper_class_name = defaults[:stamper_class_name].to_sym
           self.creator_attribute  = defaults[:creator_attribute].to_sym

@@ -1,9 +1,22 @@
 # -*- coding: utf-8 -*-
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe User do
-
-  fixtures :users, :people, :posts, :comments
+describe Ddb::Userstamp do
+  
+  class User < ActiveRecord::Base
+    model_stamper
+  end
+  
+  class Person < ActiveRecord::Base
+    model_stamper
+  end  
+  
+  class Post < ActiveRecord::Base
+    stampable :stamper_class_name => :person
+    has_many :comments
+  end
+  
+  fixtures :users, :people, :posts
   
   before(:each) do
     @zeus = users(:zeus)

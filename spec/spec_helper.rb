@@ -25,14 +25,14 @@ unless defined?(RAILS_ENV)
   
   load(File.join(File.dirname(__FILE__), 'schema.rb'))
 
-  %w(resources/models resources/controllers).each do |path|
-    $LOAD_PATH.unshift File.join(File.dirname(__FILE__), path)
-    ActiveSupport::Dependencies.load_paths << File.join(File.dirname(__FILE__), path)
-  end
-
   ActionController::Routing::Routes.draw do |map|
     map.connect ':controller/:action/:id.:format'
     map.connect ':controller/:action/:id'
+  end
+
+  %w(resources/models resources/controllers).each do |path|
+    $LOAD_PATH.unshift File.join(File.dirname(__FILE__), path)
+    ActiveSupport::Dependencies.load_paths << File.join(File.dirname(__FILE__), path)
   end
 
   require 'spec/autorun'

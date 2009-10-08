@@ -1,14 +1,5 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-class Person < ActiveRecord::Base
-  model_stamper
-end  
-
-class Post < ActiveRecord::Base
-  stampable :stamper_class_name => :person
-  has_many :comments
-end
-  
 describe PostsController, :type => :controller do
   fixtures :people, :posts
   

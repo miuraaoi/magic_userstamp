@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 require 'userstamp'
 
 module Userstamp
@@ -15,13 +16,74 @@ module Userstamp
   mattr_accessor :compatibility_mode
   @@compatibility_mode = false
 
+
+  class Event 
+    attr_reader :name, :actor, :actual_hook, :after_callback
+    attr_reader:default_attribute, :default_attribute_compatible
+
+    def initialize(name, actor, default_attribute_compatible, options = nil)
+      @name, @actor = name.to_s, actor.to_s
+      @default_attribute = "#{@actor}_id"
+      @default_attribute_compatible = default_attribute_compatible
+      options = {
+        :actual_hook => "before_#{@name.to_s}"
+      }.update(options || {})
+      @actual_hook = options[:actual_hook]
+      @after_callback = options[:after_callback]
+    end
+    
+    class << self
+      def create(name, actor, default_attribute_compatible, options = nil, &block)
+        result = self.new(name, actor, default_attribute_compatible, options, &block)
+        @name_hash ||= HashWithIndifferentAccess.new
+        @name_hash[name] = result
+        @instances ||= []
+        @instances << result
+        result
+      end
+
+      def [](event_name)
+        raise_unless_valid_name(event_name)
+        @name_hash[event_name]
+      end
+
+      def each(&block)
+        return unless block
+        (@instances || []).each(&block)
+      end
+
+      def actor_name(event_name)
+        self[event_name].actor
+      end
+
+      def valid_names
+        (@instances || []).map(&:name)
+      end
+      
+      def valid_name?(event_name)
+        valid_names.include?(event_name.to_s)
+      end
+
+      def raise_unless_valid_name(event_name)
+        return if valid_name?(event_name)
+        raise UserstampError, "Invalid event name '#{event_name.inspect}'. Event name must be one of #{valid_names.inspect}"
+      end
+    end
+  end
+
+  Event.create(:create , :creator, 'created_by')
+  Event.create(:update , :updater, 'updated_by', :actual_hook => :before_save)
+  Event.create(:destroy, :deleter, 'deleted_by', :after_callback => "save")
+
+  class UserstampError < StandardError
+  end
+
+
   # Extends the stamping functionality of ActiveRecord by automatically recording the model
   # responsible for creating, updating, and deleting the current object. See the Stamper
   # and Userstamp modules for further documentation on how the entire process works.
   module Stampable
     def self.included(base) #:nodoc:
-      super
-
       base.extend(ClassMethods)
       base.class_eval do
         include InstanceMethods
@@ -48,7 +110,7 @@ module Userstamp
         # Defaults to :deleted_by when compatibility mode is on
         class_inheritable_accessor  :deleter_attribute
 
-        self.stampable
+        # self.stampable
       end
     end
 
@@ -67,35 +129,61 @@ module Userstamp
       # The method will automatically setup all the associations, and create <tt>before_save</tt>
       # and <tt>before_create</tt> filters for doing the stamping.
       def stampable(options = {})
-        defaults  = {
-          :stamper_class_name => :user,
-          :creator_attribute  => Userstamp.compatibility_mode ? :created_by : :creator_id,
-          :updater_attribute  => Userstamp.compatibility_mode ? :updated_by : :updater_id,
-          :deleter_attribute  => Userstamp.compatibility_mode ? :deleted_by : :deleter_id
-        }.merge(options)
+        reader_name = Userstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
+        options  = {
+          :stamper_class_name => "User",
+          :creator_attribute  => Event[:create ].send(reader_name),
+          :updater_attribute  => Event[:update ].send(reader_name),
+          :deleter_attribute  => Event[:destroy].send(reader_name)
+        }.update(options || {})
 
-        self.stamper_class_name = defaults[:stamper_class_name].to_sym
-        self.creator_attribute  = defaults[:creator_attribute].to_sym
-        self.updater_attribute  = defaults[:updater_attribute].to_sym
-        self.deleter_attribute  = defaults[:deleter_attribute].to_sym
+        stamper_class_name = options[:stamper_class_name].to_s
+        stamper_class_name = stamper_class_name.camelize unless stamper_class_name =~ /^[A-Z]/
 
-        class_eval do
-          belongs_to :creator, :class_name => self.stamper_class_name.to_s.singularize.camelize,
-                               :foreign_key => self.creator_attribute
-                               
-          belongs_to :updater, :class_name => self.stamper_class_name.to_s.singularize.camelize,
-                               :foreign_key => self.updater_attribute
-                               
-          before_save     :set_updater_attribute
-          before_create   :set_creator_attribute
-                               
-          if defined?(Caboose::Acts::Paranoid)
-            belongs_to :deleter, :class_name => self.stamper_class_name.to_s.singularize.camelize,
-                                 :foreign_key => self.deleter_attribute
-            before_destroy  :set_deleter_attribute
-          end
+        self.stamper_class_name = stamper_class_name
+        self.creator_attribute  = options[:creator_attribute].to_sym
+        self.updater_attribute  = options[:updater_attribute].to_sym
+        self.deleter_attribute  = options[:deleter_attribute].to_sym
+
+        with_options(:stamper_class_name => self.stamper_class_name) do |s|
+          s.stampable_on(:create , :attribute => self.creator_attribute)
+          s.stampable_on(:update , :attribute => self.updater_attribute)
+          s.stampable_on(:destroy, :attribute => self.deleter_attribute) if defined?(Caboose::Acts::Paranoid)
         end
       end
+
+      def stampable_on(event_name, options = {})
+        event = Event[event_name]
+        reader_name = Userstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
+        options = {
+          :stamper_name => event.actor,
+          :stamper_class_name => "User",
+          # :stamper_attribute => nil
+          :attribute => event.send(reader_name),
+        }.update(options || {})
+
+        # 
+        belongs_to_class_name = options[:stamper_class_name].to_s
+        belongs_to_class_name = belongs_to_class_name.singularize.camelize unless belongs_to_class_name =~ /^[A-Z]/
+        callback_method_name = "set_#{options[:attribute]}_on_#{event.name}"
+
+
+        method_definitions = <<-"EOS"
+          belongs_to(:#{options[:stamper_name]},
+            :class_name => '#{belongs_to_class_name}',
+            :foreign_key => '#{options[:attribute].to_s}')
+
+          #{event.actual_hook} :#{callback_method_name}
+
+          def #{callback_method_name}
+            return unless self.record_userstamp
+            send("#{options[:attribute]}=", self.class.stamper_class.stamper) if has_stamper?
+            #{event.after_callback}
+          end
+        EOS
+        module_eval(method_definitions, __FILE__, __LINE__)
+      end
+
 
       # Temporarily allows you to turn stamping off. For example:
       #
@@ -107,42 +195,24 @@ module Userstamp
       def without_stamps
         original_value = self.record_userstamp
         self.record_userstamp = false
-        yield
-        self.record_userstamp = original_value
+        begin
+          yield
+        ensure
+          self.record_userstamp = original_value
+        end
       end
 
       def stamper_class #:nodoc:
-        stamper_class_name.to_s.capitalize.constantize rescue nil
+        @stamper_class ||= stamper_class_name.to_s.constantize
       end
     end
 
     module InstanceMethods #:nodoc:
       private
         def has_stamper?
-          !self.class.stamper_class.nil? && !self.class.stamper_class.stamper.nil? rescue false
+          !!(self.class.stamper_class && self.class.stamper_class.stamper)
         end
 
-        def set_creator_attribute
-          return unless self.record_userstamp
-          if respond_to?(self.creator_attribute.to_sym) && has_stamper?
-            self.send("#{self.creator_attribute}=".to_sym, self.class.stamper_class.stamper)
-          end
-        end
-
-        def set_updater_attribute
-          return unless self.record_userstamp
-          if respond_to?(self.updater_attribute.to_sym) && has_stamper?
-            self.send("#{self.updater_attribute}=".to_sym, self.class.stamper_class.stamper)
-          end
-        end
-
-        def set_deleter_attribute
-          return unless self.record_userstamp
-          if respond_to?(self.deleter_attribute.to_sym) && has_stamper?
-            self.send("#{self.deleter_attribute}=".to_sym, self.class.stamper_class.stamper)
-            save
-          end
-        end
       #end private
     end
   end

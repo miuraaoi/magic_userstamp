@@ -4,32 +4,33 @@ describe Userstamp do
 
   Userstamp.compatibility_mode = true
   
-  class Person < ActiveRecord::Base
+  class CompatiblePerson < ActiveRecord::Base
+    set_table_name('people')
     model_stamper
   end  
   
-  class Comment < ActiveRecord::Base
-    stampable   :stamper_class_name => :person
+  class CompatibleComment < ActiveRecord::Base
+    set_table_name('comments')
+    stampable   :stamper_class_name => :compatible_person
     belongs_to  :post
-  end
+   end
 
   Userstamp.compatibility_mode = false
-
   
   fixtures :people, :comments 
 
   before(:each) do
-    @delynn = people(:delynn)
-    @nicole = people(:nicole)
-    @first_comment = comments(:first_comment)
-    @second_comment = comments(:second_comment)
-    Person.stamper = @delynn
+    @delynn = CompatiblePerson.find(people(:delynn).id)
+    @nicole = CompatiblePerson.find(people(:nicole).id)
+    @first_comment = CompatibleComment.find(comments(:first_comment).id)
+    @second_comment = CompatibleComment.find(comments(:second_comment).id)
+    CompatiblePerson.stamper = @delynn
   end
 
   it "comment_creation_with_stamped_object" do
-    Person.stamper.should == @delynn.id
+    CompatiblePerson.stamper.should == @delynn.id
 
-    comment = Comment.create(:comment => "Test Comment")
+    comment = CompatibleComment.create(:comment => "Test Comment")
     comment.created_by.should == @delynn.id
     comment.updated_by.should == @delynn.id
     comment.creator.should ==    @delynn
@@ -37,10 +38,10 @@ describe Userstamp do
   end
 
   it "comment_creation_with_stamped_integer" do
-    Person.stamper = 2
-    Person.stamper.should == 2
+    CompatiblePerson.stamper = 2
+    CompatiblePerson.stamper.should == 2
 
-    comment = Comment.create(:comment => "Test Comment - 2")
+    comment = CompatibleComment.create(:comment => "Test Comment - 2")
     comment.created_by.should == @nicole.id
     comment.updated_by.should == @nicole.id
     comment.creator.should ==    @nicole
@@ -48,8 +49,8 @@ describe Userstamp do
   end
   
   it "comment_updating_with_stamped_object" do
-    Person.stamper = @nicole
-    assert_equal @nicole.id, Person.stamper
+    CompatiblePerson.stamper = @nicole
+    assert_equal @nicole.id, CompatiblePerson.stamper
 
     @first_comment.comment << " - Updated"
     @first_comment.save
@@ -61,8 +62,8 @@ describe Userstamp do
   end
 
   it "comment_updating_with_stamped_integer" do
-    Person.stamper = 2
-    Person.stamper.should == 2
+    CompatiblePerson.stamper = 2
+    CompatiblePerson.stamper.should == 2
 
     @first_comment.comment << " - Updated"
     @first_comment.save

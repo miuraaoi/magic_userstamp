@@ -1,9 +1,5 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-class User < ActiveRecord::Base
-  model_stamper
-end
-  
 describe UsersController, :type => :controller do
   fixtures :users
   

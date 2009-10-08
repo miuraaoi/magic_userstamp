@@ -3,6 +3,59 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Userstamp do
   
+#   Userstamp.setup_magic_columns do |config|
+#     config.with_options(:stamper_class_name => 'User', :stampable_class_names => %w(User Person)) do |c|
+#       c.column(:creator_id, :on => :create)
+#       c.column(:updater_id, :on => :update)
+#       c.column(:deleter_id, :on => :destroy)
+#     end
+
+#     config.with_options(:stamper_class_name => 'Person', :stampable_class_names => %w(Post)) do |c|
+#       c.column(:creator_id, :on => :create)
+#       c.column(:updater_id, :on => :update)
+#       c.column(:deleter_id, :on => :destroy)
+#     end
+
+#     config.with_options(:stamper_class_name => 'Person', :stampable_class_names => %w(Comment)) do |c|
+#       c.column(:creator_by, :on => :create)
+#       c.column(:updater_by, :on => :update)
+#       c.column(:deleter_by, :on => :destroy)
+#     end
+
+#     config.with_options(:stamper_class_name => 'Person', :stamp_attr_name => :name, :stampable_class_names => %w(Ping)) do |c|
+#       c.column(:creator_name, :on => :create)
+#       c.column(:updater_name, :on => :update)
+#       c.column(:deleter_name, :on => :destroy)
+#     end
+#   end
+
+#   class User < ActiveRecord::Base
+#     # model_stamper
+#   end
+
+#   class Person < ActiveRecord::Base
+#     # model_stamper
+#   end  
+
+#   class Post < ActiveRecord::Base
+#     # stampable :stamper_class_name => :person
+#     has_many :comments
+#   end
+
+#   class Comment < ActiveRecord::Base
+#     # stampable :stamper_class_name => :person
+#     belongs_to :post
+#   end
+
+#   class Ping < ActiveRecord::Base
+#     # stampable :stamper_class_name => :person
+#     belongs_to :post
+#   end
+
+#   after(:all) do
+#     Userstamp.clear_magic_columns_settings
+#   end
+  
   fixtures :users, :people, :posts
   
   before(:each) do

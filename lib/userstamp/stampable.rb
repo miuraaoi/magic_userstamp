@@ -95,21 +95,6 @@ module Userstamp
         # Which class is responsible for stamping? Defaults to :user.
         class_inheritable_accessor  :stamper_class_name
 
-        # What column should be used for the creator stamp?
-        # Defaults to :creator_id when compatibility mode is off
-        # Defaults to :created_by when compatibility mode is on
-        class_inheritable_accessor  :creator_attribute
-
-        # What column should be used for the updater stamp?
-        # Defaults to :updater_id when compatibility mode is off
-        # Defaults to :updated_by when compatibility mode is on
-        class_inheritable_accessor  :updater_attribute
-
-        # What column should be used for the deleter stamp?
-        # Defaults to :deleter_id when compatibility mode is off
-        # Defaults to :deleted_by when compatibility mode is on
-        class_inheritable_accessor  :deleter_attribute
-
         # self.stampable
       end
     end
@@ -141,14 +126,11 @@ module Userstamp
         stamper_class_name = stamper_class_name.camelize unless stamper_class_name =~ /^[A-Z]/
 
         self.stamper_class_name = stamper_class_name
-        self.creator_attribute  = options[:creator_attribute].to_sym
-        self.updater_attribute  = options[:updater_attribute].to_sym
-        self.deleter_attribute  = options[:deleter_attribute].to_sym
 
         with_options(:stamper_class_name => self.stamper_class_name) do |s|
-          s.stampable_on(:create , :attribute => self.creator_attribute)
-          s.stampable_on(:update , :attribute => self.updater_attribute)
-          s.stampable_on(:destroy, :attribute => self.deleter_attribute) if defined?(Caboose::Acts::Paranoid)
+          s.stampable_on(:create , :attribute => options[:creator_attribute])
+          s.stampable_on(:update , :attribute => options[:updater_attribute])
+          s.stampable_on(:destroy, :attribute => options[:deleter_attribute]) if defined?(Caboose::Acts::Paranoid)
         end
       end
 

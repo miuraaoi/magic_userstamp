@@ -16,7 +16,6 @@ module Userstamp
   mattr_accessor :compatibility_mode
   @@compatibility_mode = false
 
-
   class Event 
     attr_reader :name, :actor, :actual_hook, :after_callback
     attr_reader:default_attribute, :default_attribute_compatible
@@ -77,7 +76,6 @@ module Userstamp
 
   class UserstampError < StandardError
   end
-
 
   # Extends the stamping functionality of ActiveRecord by automatically recording the model
   # responsible for creating, updating, and deleting the current object. See the Stamper
@@ -144,11 +142,9 @@ module Userstamp
           :attribute => event.send(reader_name),
         }.update(options || {})
 
-        # 
         belongs_to_class_name = options[:stamper_class_name].to_s
         belongs_to_class_name = belongs_to_class_name.singularize.camelize unless belongs_to_class_name =~ /^[A-Z]/
         callback_method_name = "set_#{options[:attribute]}_on_#{event.name}"
-
 
         method_definitions = <<-"EOS"
           belongs_to(:#{options[:stamper_name]},
@@ -165,7 +161,6 @@ module Userstamp
         EOS
         module_eval(method_definitions, __FILE__, __LINE__)
       end
-
 
       # Temporarily allows you to turn stamping off. For example:
       #

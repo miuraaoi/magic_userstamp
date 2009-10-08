@@ -1,5 +1,5 @@
 class UserstampController < ApplicationController
-  include Ddb::Controller::Userstamp
+  include Userstamp::Controller
 
   protected
     def current_user

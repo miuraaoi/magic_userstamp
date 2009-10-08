@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe Ddb::Userstamp do
+describe Userstamp do
   
   class User < ActiveRecord::Base
     model_stamper

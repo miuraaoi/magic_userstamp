@@ -41,5 +41,3 @@ module Userstamp
     end
   end
 end
-
-ActionController::Base.send(:include, Userstamp::Controller) if defined?(ActionController)

@@ -1,8 +1,8 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe Ddb::Userstamp do
+describe Userstamp do
 
-  Ddb::Userstamp.compatibility_mode = true
+  Userstamp.compatibility_mode = true
   
   class Person < ActiveRecord::Base
     model_stamper
@@ -13,7 +13,7 @@ describe Ddb::Userstamp do
     belongs_to  :post
   end
 
-  Ddb::Userstamp.compatibility_mode = false
+  Userstamp.compatibility_mode = false
 
   
   fixtures :people, :comments 

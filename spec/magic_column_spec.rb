@@ -20,12 +20,12 @@ describe Userstamp do
 
   class MagicUser < ActiveRecord::Base
     set_table_name 'users'
-    model_stamper
+    # model_stamper
   end
 
   class MagicPerson < ActiveRecord::Base
     set_table_name 'people'
-    model_stamper
+    # model_stamper
   end
 
   class MagicPost < ActiveRecord::Base

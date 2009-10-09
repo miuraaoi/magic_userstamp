@@ -92,6 +92,8 @@ module Userstamp
         belongs_to_class_name = options[:stamper_class_name].to_s
         belongs_to_class_name = belongs_to_class_name.singularize.camelize unless belongs_to_class_name =~ /^[A-Z]/
         callback_method_name = "set_#{options[:attribute]}_on_#{event.name}"
+        stamper_class = options[:stamper_class_name].to_s.constantize
+        stamper_class.model_stamper
 
         method_definitions = <<-"EOS"
           belongs_to(:#{options[:stamper_name]},

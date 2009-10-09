@@ -84,16 +84,9 @@ module Userstamp
     def self.included(base) #:nodoc:
       base.extend(ClassMethods)
       base.class_eval do
-        include InstanceMethods
-
         # Should ActiveRecord record userstamps? Defaults to true.
         class_inheritable_accessor  :record_userstamp
         self.record_userstamp = true
-
-        # Which class is responsible for stamping? Defaults to :user.
-        class_inheritable_accessor  :stamper_class_name
-
-        # self.stampable
       end
     end
 
@@ -123,9 +116,7 @@ module Userstamp
         stamper_class_name = options[:stamper_class_name].to_s
         stamper_class_name = stamper_class_name.camelize unless stamper_class_name =~ /^[A-Z]/
 
-        self.stamper_class_name = stamper_class_name
-
-        with_options(:stamper_class_name => self.stamper_class_name) do |s|
+        with_options(:stamper_class_name => stamper_class_name) do |s|
           s.stampable_on(:create , :attribute => options[:creator_attribute])
           s.stampable_on(:update , :attribute => options[:updater_attribute])
           s.stampable_on(:destroy, :attribute => options[:deleter_attribute]) if defined?(Caboose::Acts::Paranoid)
@@ -155,7 +146,10 @@ module Userstamp
 
           def #{callback_method_name}
             return unless self.record_userstamp
-            send("#{options[:attribute]}=", self.class.stamper_class.stamper) if has_stamper?
+            @@#{options[:attribute]}_stamper_class ||= "#{options[:stamper_class_name]}".constantize
+            stamper_class = @@#{options[:attribute]}_stamper_class
+            stamper = stamper_class.stamper if stamper_class
+            send("#{options[:attribute]}=", stamper) if stamper
             #{event.after_callback}
           end
         EOS
@@ -178,19 +172,6 @@ module Userstamp
           self.record_userstamp = original_value
         end
       end
-
-      def stamper_class #:nodoc:
-        @stamper_class ||= stamper_class_name.to_s.constantize
-      end
-    end
-
-    module InstanceMethods #:nodoc:
-      private
-        def has_stamper?
-          !!(self.class.stamper_class && self.class.stamper_class.stamper)
-        end
-
-      #end private
     end
   end
 end

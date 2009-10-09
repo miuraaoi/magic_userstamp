@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 module Userstamp
   autoload :Config, 'userstamp/config'
   autoload :Controller, 'userstamp/controller'
@@ -10,3 +11,5 @@ module Userstamp
   class UserstampError < StandardError
   end
 end
+
+Userstamp::Config # Userstamp.configのための呼び出し

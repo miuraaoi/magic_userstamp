@@ -2,21 +2,32 @@
 require 'userstamp'
 
 module Userstamp
+
+  def self.config
+    Config.instance
+  end
   
   class Config
 
     class << self
-      def setup(&block)
-        @config = Config.new
+      def instance
+        @instance || setup
+      end
+      
+      def setup
+        @instance = Config.new
+        yield(@instance) if block_given?
+        @instance
       end
 
       def clear
-        @config = nil
+        @instance = nil
       end
     end
 
     attr_reader :patterns
     attr_accessor :with_destroy
+    attr_accessor :verbose
 
     def initialize
       @patterns = []
@@ -48,7 +59,8 @@ module Userstamp
     class Pattern
       attr_reader :event_name, :column_name, :stampable_class_names
       attr_reader :stamper_class_name, :stamper_attr_name
-
+      attr_reader :options_for_stampable_on
+      
       def initialize(event_name, column_name, options = nil)
         @event_name = event_name
         @column_name = column_name
@@ -57,7 +69,9 @@ module Userstamp
           :stamper_class_name => 'User',
           :stamper_attr_name => nil # sholuld not be only 'id' but PK column name
         }.update(options || {})
-        @stampable_class_names = options[:stampable_class_names]
+        @stampable_class_names = options.delete(:stampable_class_names)
+        Userstamp.raise_unless_valid_options_for_stampable_on(options)
+        @options_for_stampable_on = options
         @stamper_class_name = options[:stamper_class_name]
         @stamper_attr_name = options[:stamper_attr_name]
       end
@@ -67,6 +81,10 @@ module Userstamp
           (column_name.to_s == self.column_name.to_s)
       end
 
+      def args_for_stampable_on(column_name = nil)
+        [event_name, {:attribute => column_name || self.column_name}.update(@options_for_stampable_on)]
+      end
+      
     end
 
   end

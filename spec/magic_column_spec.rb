@@ -4,13 +4,15 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 describe Userstamp do
   
   Userstamp::Config.setup do |config|
+    # config.verbose = true
+
     config.defaults(:stamper_class_name => 'MagicPerson', :stampable_class_names => %w(MagicPost))
     config.compatibles(:stamper_class_name => 'MagicPerson', :stampable_class_names => %w(MagicComment))
 
     config.with_options(:stamper_class_name => 'MagicPerson', :stamper_attr_name => :name, :stampable_class_names => %w(MagicPing)) do |c|
       c.on(:create , :creator_name)
       c.on(:update , :updater_name)
-      c.on(:destroy, :deleter_name)
+      # c.on(:destroy, :deleter_name)
     end
 
     config.defaults(:stamper_class_name => 'MagicUser')
@@ -57,6 +59,17 @@ describe Userstamp do
     MagicUser.stamper = @zeus
     MagicPerson.stamper = @delynn
   end
+
+  it "Userstamp.config.pattern_for" do
+    Userstamp.config.patterns.length.should == 8
+    p1 = Userstamp.config.pattern_for(MagicUser, "creator_id")
+    p1.should_not be_nil
+    p2 = Userstamp.config.pattern_for(MagicPerson, "creator_id")
+    p2.should_not be_nil
+    p1 = Userstamp.config.pattern_for(MagicPost, "creator_id")
+    p1.should_not be_nil
+  end
+  
 
   it "person_creation_with_stamped_object" do
     MagicUser.stamper.should == @zeus.id

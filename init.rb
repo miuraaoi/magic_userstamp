@@ -5,6 +5,6 @@ if defined?(ActiveRecord)
   ActiveRecord::Base.module_eval do 
     include Userstamp::Stampable
     include Userstamp::Stamper
-    include Userstamp::MagicColumns
+    include Userstamp::MagicColumns # mest be included after Userstamp::Stampable
   end
 end

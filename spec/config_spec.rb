@@ -70,10 +70,10 @@ describe Userstamp::Config do
       [Foo, Bar, Baz].each do |klass|
         @config.pattern_for(klass, 'creator_id').should_not be_nil
         @config.pattern_for(klass, 'updater_id').should_not be_nil
-        @config.pattern_for(klass, 'deleter_id').should be_nil
-        @config.pattern_for(klass, 'creator_by').should be_nil
-        @config.pattern_for(klass, 'updater_by').should be_nil
-        @config.pattern_for(klass, 'deleter_by').should be_nil
+        @config.pattern_for(klass, 'deleter_id').should     be_nil
+        @config.pattern_for(klass, 'creator_by').should     be_nil
+        @config.pattern_for(klass, 'updater_by').should     be_nil
+        @config.pattern_for(klass, 'deleter_by').should     be_nil
       end
     end
 
@@ -121,6 +121,35 @@ describe Userstamp::Config do
       end
     end
   end
+
+  describe Userstamp::Config::Pattern do
+    describe "args_for_stampable_on" do
+      
+      it "should return args to call Userstamp::Stampable.stampable_on" do
+        @config.defaults
+        p1 = @config.pattern_for(Foo, "creator_id")
+        p1.args_for_stampable_on.should == [:create, {
+            :attribute => :creator_id, 
+            :stamper_class_name=>"User", 
+            :stamper_attr_name=>nil}]
+      end
+      
+      it "should return args to call Userstamp::Stampable.stampable_on with options" do
+        @config.on(:update, :updater_id, :actual_hook => :before_update, 
+          :stamper_name => 'foo_updater', :stamper_class_name => 'Foo',
+          :stamper_attr_name => 'cd')
+        p1 = @config.pattern_for(Foo, "updater_id")
+        p1.args_for_stampable_on.should == [:update, {
+            :attribute => :updater_id,
+            :actual_hook => :before_update, 
+            :stamper_name => 'foo_updater', :stamper_class_name => 'Foo',
+            :stamper_attr_name => 'cd'}]
+      end
+      
+    end
+    
+  end
+
 
 
 end

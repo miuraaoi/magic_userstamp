@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 require 'userstamp'
-ActionController::Base.send(:include, Userstamp::Controller) if defined?(ActionController)
+# コントローラへは自身でincludeしてください。
+# ActionController::Base.send(:include, Userstamp::Controller) if defined?(ActionController)
 ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, Userstamp::MigrationHelper)
 if defined?(ActiveRecord)
   ActiveRecord::Base.module_eval do 

@@ -3,76 +3,65 @@ require File.join(File.dirname(__FILE__), 'spec_helper')
 
 describe Userstamp do
   
-#   Userstamp.setup_magic_columns do |config|
-#     config.with_options(:stamper_class_name => 'User', :stampable_class_names => %w(User Person)) do |c|
-#       c.column(:creator_id, :on => :create)
-#       c.column(:updater_id, :on => :update)
-#       c.column(:deleter_id, :on => :destroy)
-#     end
+  Userstamp::Config.setup do |config|
+    config.defaults(:stamper_class_name => 'MagicPerson', :stampable_class_names => %w(MagicPost))
+    config.compatibles(:stamper_class_name => 'MagicPerson', :stampable_class_names => %w(MagicComment))
 
-#     config.with_options(:stamper_class_name => 'Person', :stampable_class_names => %w(Post)) do |c|
-#       c.column(:creator_id, :on => :create)
-#       c.column(:updater_id, :on => :update)
-#       c.column(:deleter_id, :on => :destroy)
-#     end
+    config.with_options(:stamper_class_name => 'MagicPerson', :stamper_attr_name => :name, :stampable_class_names => %w(MagicPing)) do |c|
+      c.on(:create , :creator_name)
+      c.on(:update , :updater_name)
+      c.on(:destroy, :deleter_name)
+    end
 
-#     config.with_options(:stamper_class_name => 'Person', :stampable_class_names => %w(Comment)) do |c|
-#       c.column(:creator_by, :on => :create)
-#       c.column(:updater_by, :on => :update)
-#       c.column(:deleter_by, :on => :destroy)
-#     end
+    config.defaults(:stamper_class_name => 'MagicUser')
+  end
 
-#     config.with_options(:stamper_class_name => 'Person', :stamp_attr_name => :name, :stampable_class_names => %w(Ping)) do |c|
-#       c.column(:creator_name, :on => :create)
-#       c.column(:updater_name, :on => :update)
-#       c.column(:deleter_name, :on => :destroy)
-#     end
-#   end
+  class MagicUser < ActiveRecord::Base
+    set_table_name 'users'
+    model_stamper
+  end
 
-#   class User < ActiveRecord::Base
-#     # model_stamper
-#   end
+  class MagicPerson < ActiveRecord::Base
+    set_table_name 'people'
+    model_stamper
+  end
 
-#   class Person < ActiveRecord::Base
-#     # model_stamper
-#   end  
+  class MagicPost < ActiveRecord::Base
+    set_table_name 'posts'
+    # stampable :stamper_class_name => :person
+  end
 
-#   class Post < ActiveRecord::Base
-#     # stampable :stamper_class_name => :person
-#     has_many :comments
-#   end
+  class MagicComment < ActiveRecord::Base
+    set_table_name 'comments'
+    # stampable :stamper_class_name => :person
+  end
 
-#   class Comment < ActiveRecord::Base
-#     # stampable :stamper_class_name => :person
-#     belongs_to :post
-#   end
+  class MagicPing < ActiveRecord::Base
+    set_table_name 'pings'
+    # stampable :stamper_class_name => :person
+  end
 
-#   class Ping < ActiveRecord::Base
-#     # stampable :stamper_class_name => :person
-#     belongs_to :post
-#   end
-
-#   after(:all) do
-#     Userstamp.clear_magic_columns_settings
-#   end
+  after(:all) do
+    Userstamp::Config.clear
+  end
   
   fixtures :users, :people, :posts
   
   before(:each) do
-    @zeus = users(:zeus)
-    @hera = users(:hera)
-    @delynn = people(:delynn)
-    @nicole = people(:nicole)
-    @first_post = posts(:first_post)
-    @second_post = posts(:second_post)
-    User.stamper = @zeus
-    Person.stamper = @delynn
+    @zeus = MagicUser.find(users(:zeus).id)
+    @hera = MagicUser.find(users(:hera).id)
+    @delynn = MagicPerson.find(people(:delynn).id)
+    @nicole = MagicPerson.find(people(:nicole).id)
+    @first_post = MagicPost.find(posts(:first_post).id)
+    @second_post = MagicPost.find(posts(:second_post).id)
+    MagicUser.stamper = @zeus
+    MagicPerson.stamper = @delynn
   end
 
   it "person_creation_with_stamped_object" do
-    User.stamper.should == @zeus.id
+    MagicUser.stamper.should == @zeus.id
     
-    person = Person.create(:name => "David")
+    person = MagicPerson.create(:name => "David")
     person.creator_id.should == @zeus.id
     person.updater_id.should == @zeus.id
     person.creator.should == @zeus
@@ -80,10 +69,10 @@ describe Userstamp do
   end
 
   it "person_creation_with_stamped_integer" do
-    User.stamper = 2
-    User.stamper.should == 2
+    MagicUser.stamper = 2
+    MagicUser.stamper.should == 2
 
-    person = Person.create(:name => "Daniel")
+    person = MagicPerson.create(:name => "Daniel")
     person.creator_id.should ==  @hera.id 
     person.updater_id.should ==  @hera.id 
     person.creator.should ==     @hera 
@@ -91,9 +80,9 @@ describe Userstamp do
   end
 
   it "post_creation_with_stamped_object" do
-    Person.stamper.should == @delynn.id
+    MagicPerson.stamper.should == @delynn.id
 
-    post = Post.create(:title => "Test Post - 1")
+    post = MagicPost.create(:title => "Test Post - 1")
     post.creator_id.should == @delynn.id
     post.updater_id.should ==  @delynn.id
     post.creator.should ==     @delynn
@@ -101,10 +90,10 @@ describe Userstamp do
   end
 
   it "post_creation_with_stamped_integer" do
-    Person.stamper = 2
-    Person.stamper.should == 2
+    MagicPerson.stamper = 2
+    MagicPerson.stamper.should == 2
 
-    post = Post.create(:title => "Test Post - 2")
+    post = MagicPost.create(:title => "Test Post - 2")
     post.creator_id.should == @nicole.id
     post.updater_id.should == @nicole.id
     post.creator.should ==    @nicole
@@ -112,8 +101,8 @@ describe Userstamp do
   end
 
   it "person_updating_with_stamped_object" do
-    User.stamper = @hera
-    User.stamper.should == @hera.id
+    MagicUser.stamper = @hera
+    MagicUser.stamper.should == @hera.id
 
     @delynn.name << " Berry"
     @delynn.save
@@ -125,8 +114,8 @@ describe Userstamp do
   end
 
   it "person_updating_with_stamped_integer" do
-    User.stamper = 2
-    User.stamper.should == 2
+    MagicUser.stamper = 2
+    MagicUser.stamper.should == 2
 
     @delynn.name << " Berry"
     @delynn.save
@@ -138,8 +127,8 @@ describe Userstamp do
   end
 
   it "post_updating_with_stamped_object" do
-    Person.stamper = @nicole
-    Person.stamper.should == @nicole.id
+    MagicPerson.stamper = @nicole
+    MagicPerson.stamper.should == @nicole.id
 
     @first_post.title << " - Updated"
     @first_post.save
@@ -151,8 +140,8 @@ describe Userstamp do
   end
 
   it "post_updating_with_stamped_integer" do
-    Person.stamper = 2
-    Person.stamper.should == 2
+    MagicPerson.stamper = 2
+    MagicPerson.stamper.should == 2
 
     @first_post.title << " - Updated"
     @first_post.save

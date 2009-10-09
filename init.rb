@@ -5,5 +5,6 @@ if defined?(ActiveRecord)
   ActiveRecord::Base.module_eval do 
     include Userstamp::Stampable
     include Userstamp::Stamper
+    include Userstamp::MagicColumns
   end
 end

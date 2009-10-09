@@ -70,6 +70,7 @@ module Userstamp
           :stamper_class_name => "User",
           # :stamper_attribute => nil
           :attribute => event.send(reader_name),
+          :actual_hook => nil
         }.update(options || {})
 
         belongs_to_class_name = options[:stamper_class_name].to_s
@@ -81,7 +82,7 @@ module Userstamp
             :class_name => '#{belongs_to_class_name}',
             :foreign_key => '#{options[:attribute].to_s}')
 
-          #{event.actual_hook} :#{callback_method_name}
+          #{options[:actual_hook] || event.actual_hook} :#{callback_method_name}
 
           def #{callback_method_name}
             return unless self.record_userstamp

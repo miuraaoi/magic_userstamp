@@ -56,7 +56,9 @@ describe Userstamp do
     @nicole = MagicPerson.find(people(:nicole).id)
     @first_post = MagicPost.find(posts(:first_post).id)
     @second_post = MagicPost.find(posts(:second_post).id)
+    MagicUser.model_stamper # 通常なら必要ないばすだけど、ここでは必要
     MagicUser.stamper = @zeus
+    MagicPerson.model_stamper # 通常なら必要ないばすだけど、ここでは必要
     MagicPerson.stamper = @delynn
   end
 

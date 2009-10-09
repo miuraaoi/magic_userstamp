@@ -59,5 +59,5 @@ module Userstamp
 
   Event.create(:create , :creator, 'created_by')
   Event.create(:update , :updater, 'updated_by', :actual_hook => :before_save)
-  Event.create(:destroy, :deleter, 'deleted_by', :after_callback => "save")
+  Event.create(:destroy, :deleter, 'deleted_by') #, :after_callback => "save")
 end

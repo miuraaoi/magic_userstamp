@@ -104,6 +104,7 @@ module Userstamp
             return unless self.record_userstamp
             @@#{options[:attribute]}_stamper_class ||= "#{options[:stamper_class_name]}".constantize
             stamper_class = @@#{options[:attribute]}_stamper_class
+            stamper_class.model_stamper if stamper_class
             stamper = stamper_class.stamper if stamper_class
             send("#{options[:attribute]}=", stamper) if stamper
             #{event.after_callback}

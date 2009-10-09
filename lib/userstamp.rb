@@ -10,6 +10,8 @@ module Userstamp
 
   class UserstampError < StandardError
   end
-end
 
-Userstamp::Config # Userstamp.configのための呼び出し
+  def self.config
+    Config.instance
+  end
+end

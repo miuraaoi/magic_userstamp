@@ -3,10 +3,6 @@ require 'userstamp'
 
 module Userstamp
 
-  def self.config
-    Config.instance
-  end
-  
   class Config
 
     class << self

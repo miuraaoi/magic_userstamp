@@ -1,5 +1,9 @@
 require 'userstamp'
 ActionController::Base.send(:include, Userstamp::Controller) if defined?(ActionController)
 ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, Userstamp::MigrationHelper)
-ActiveRecord::Base.send(:include, Userstamp::Stampable) if defined?(ActiveRecord)
-ActiveRecord::Base.send(:include, Userstamp::Stamper) if defined?(ActiveRecord)
+if defined?(ActiveRecord)
+  ActiveRecord::Base.module_eval do 
+    include Userstamp::Stampable
+    include Userstamp::Stamper
+  end
+end

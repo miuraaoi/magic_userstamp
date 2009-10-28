@@ -10,7 +10,7 @@ Gem::Specification.new do |s|
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["akimatter"]
   s.date = %q{2009-10-28}
-  s.description = %q{TODO: longer description of your gem}
+  s.description = %q{This Rails plugin extends ActiveRecord::Base to add automatic updating of created_by and updated_by attributes of your models in much the same way that the ActiveRecord::Timestamp module updates created_(at/on) and updated_(at/on) attributes.}
   s.email = %q{akm2000@gmail.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -34,6 +34,7 @@ Gem::Specification.new do |s|
      "lib/userstamp/migration_helper.rb",
      "lib/userstamp/stampable.rb",
      "lib/userstamp/stamper.rb",
+     "magic_userstamp.gemspec",
      "rdoc/classes/Ddb/Controller.html",
      "rdoc/classes/Ddb/Controller/Userstamp.html",
      "rdoc/classes/Ddb/Controller/Userstamp/InstanceMethods.html",
@@ -86,7 +87,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.5}
-  s.summary = %q{TODO: one-line summary of your gem}
+  s.summary = %q{creator_id/updater_id/deleter_id support with setting outside models}
   s.test_files = [
     "spec/compatibility_stamping_spec.rb",
      "spec/config_spec.rb",

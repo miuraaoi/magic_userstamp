@@ -20,10 +20,10 @@ Spec::Rake::SpecTask.new(:spec => 'coverage:clean') do |t|
   t.rcov_opts = ["--exclude", "spec\/"]
 end
  
-desc 'Generate documentation for the userstamp plugin.'
+desc 'Generate documentation for the magic_userstamp plugin.'
 Rake::RDocTask.new(:rdoc) do |rdoc|
   rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'Userstamp'
+  rdoc.title    = 'MagicUserstamp'
   rdoc.options << '--line-numbers' << '--inline-source' << '-c UTF-8'
   rdoc.rdoc_files.include('README*')
   rdoc.rdoc_files.include('lib/**/*.rb')
@@ -43,11 +43,11 @@ end
 begin
   require 'jeweler'
   Jeweler::Tasks.new do |s|
-    s.name = "userstamp"
-    s.summary  = "userstamp deals creator_id, updater_id and deleter_id automatically"
-    s.description  = "userstamp deals creator_id, updater_id and deleter_id automatically"
+    s.name = "magic_userstamp"
+    s.summary  = "magic_userstamp deals creator_id, updater_id and deleter_id automatically"
+    s.description  = "magic_userstamp deals creator_id, updater_id and deleter_id automatically"
     s.email    = "akima@gmail.com"
-    s.homepage = "http://github.com/akm/userstamp/"
+    s.homepage = "http://github.com/akm/magic_userstamp/"
     s.authors  = ["Takeshi Akima"]
   end
 rescue LoadError

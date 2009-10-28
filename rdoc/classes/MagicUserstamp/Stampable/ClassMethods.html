@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Module: MagicUserstamp::Stampable::ClassMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Module</strong></td>
+          <td class="class-name-in-header">MagicUserstamp::Stampable::ClassMethods</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../../../files/lib/magic_userstamp/stampable_rb.html">
+                lib/magic_userstamp/stampable.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000013">stampable</a>&nbsp;&nbsp;
+      <a href="#M000014">stampable_on</a>&nbsp;&nbsp;
+      <a href="#M000015">without_stamps</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="#M000013" class="method-signature">
+          <span class="method-name">stampable</span><span class="method-args">(options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+This method is automatically called on for all classes that inherit from
+ActiveRecord, but if you need to customize how the plug-in functions, this
+is the method to use. Here&#8216;s an example:
+</p>
+<pre>
+  class Post &lt; ActiveRecord::Base
+    stampable :stamper_class_name =&gt; :person,
+              :creator_attribute  =&gt; :create_user,
+              :updater_attribute  =&gt; :update_user,
+              :deleter_attribute  =&gt; :delete_user
+  end
+</pre>
+<p>
+The method will automatically setup all the associations, and create
+<tt>before_save</tt> and <tt>before_create</tt> filters for doing the
+stamping.
+</p>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000013-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000013-source">
+<pre>
+    <span class="ruby-comment cmt"># File lib/magic_userstamp/stampable.rb, line 61</span>
+61:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stampable</span>(<span class="ruby-identifier">options</span> = {})
+62:         <span class="ruby-identifier">reader_name</span> = <span class="ruby-constant">MagicUserstamp</span>.<span class="ruby-identifier">compatibility_mode</span> <span class="ruby-value">? </span><span class="ruby-operator">:</span><span class="ruby-identifier">default_attribute_compatible</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">:default_attribute</span>
+63:         <span class="ruby-identifier">options</span>  = {
+64:           <span class="ruby-identifier">:stamper_class_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;User&quot;</span>,
+65:           <span class="ruby-identifier">:creator_attribute</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Event</span>[<span class="ruby-identifier">:create</span> ].<span class="ruby-identifier">send</span>(<span class="ruby-identifier">reader_name</span>),
+66:           <span class="ruby-identifier">:updater_attribute</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Event</span>[<span class="ruby-identifier">:update</span> ].<span class="ruby-identifier">send</span>(<span class="ruby-identifier">reader_name</span>),
+67:           <span class="ruby-identifier">:deleter_attribute</span>  =<span class="ruby-operator">&gt;</span> <span class="ruby-constant">Event</span>[<span class="ruby-identifier">:destroy</span>].<span class="ruby-identifier">send</span>(<span class="ruby-identifier">reader_name</span>)
+68:         }.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">options</span> <span class="ruby-operator">||</span> {})
+69: 
+70:         <span class="ruby-identifier">stamper_class_name</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:stamper_class_name</span>].<span class="ruby-identifier">to_s</span>
+71:         <span class="ruby-identifier">stamper_class_name</span> = <span class="ruby-identifier">stamper_class_name</span>.<span class="ruby-identifier">camelize</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">stamper_class_name</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z]/</span>
+72: 
+73:         <span class="ruby-identifier">with_options</span>(<span class="ruby-identifier">:stamper_class_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">stamper_class_name</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+74:           <span class="ruby-identifier">s</span>.<span class="ruby-identifier">stampable_on</span>(<span class="ruby-identifier">:create</span> , <span class="ruby-identifier">:attribute</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:creator_attribute</span>])
+75:           <span class="ruby-identifier">s</span>.<span class="ruby-identifier">stampable_on</span>(<span class="ruby-identifier">:update</span> , <span class="ruby-identifier">:attribute</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:updater_attribute</span>])
+76:           <span class="ruby-identifier">s</span>.<span class="ruby-identifier">stampable_on</span>(<span class="ruby-identifier">:destroy</span>, <span class="ruby-identifier">:attribute</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:deleter_attribute</span>]) <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">defined?</span>(<span class="ruby-constant">Caboose</span><span class="ruby-operator">::</span><span class="ruby-constant">Acts</span><span class="ruby-operator">::</span><span class="ruby-constant">Paranoid</span>)
+77:         <span class="ruby-keyword kw">end</span>
+78:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="#M000014" class="method-signature">
+          <span class="method-name">stampable_on</span><span class="method-args">(event_name, options = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000014-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000014-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/magic_userstamp/stampable.rb, line 80</span>
+ 80:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">stampable_on</span>(<span class="ruby-identifier">event_name</span>, <span class="ruby-identifier">options</span> = {})
+ 81:         <span class="ruby-constant">MagicUserstamp</span><span class="ruby-operator">::</span><span class="ruby-constant">Stampable</span>.<span class="ruby-identifier">raise_unless_valid_options_for_stampable_on</span>(<span class="ruby-identifier">options</span>)
+ 82:         <span class="ruby-identifier">event</span> = <span class="ruby-constant">Event</span>[<span class="ruby-identifier">event_name</span>]
+ 83:         <span class="ruby-identifier">reader_name</span> = <span class="ruby-constant">MagicUserstamp</span>.<span class="ruby-identifier">compatibility_mode</span> <span class="ruby-value">? </span><span class="ruby-operator">:</span><span class="ruby-identifier">default_attribute_compatible</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">:default_attribute</span>
+ 84:         <span class="ruby-identifier">options</span> = {
+ 85:           <span class="ruby-identifier">:stamper_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">actor</span>,
+ 86:           <span class="ruby-identifier">:stamper_class_name</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;User&quot;</span>,
+ 87:           <span class="ruby-comment cmt"># :stamper_attribute =&gt; nil</span>
+ 88:           <span class="ruby-identifier">:attribute</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">event</span>.<span class="ruby-identifier">send</span>(<span class="ruby-identifier">reader_name</span>),
+ 89:           <span class="ruby-identifier">:actual_hook</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">nil</span>
+ 90:         }.<span class="ruby-identifier">update</span>(<span class="ruby-identifier">options</span> <span class="ruby-operator">||</span> {})
+ 91: 
+ 92:         <span class="ruby-identifier">belongs_to_class_name</span> = <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:stamper_class_name</span>].<span class="ruby-identifier">to_s</span>
+ 93:         <span class="ruby-identifier">belongs_to_class_name</span> = <span class="ruby-identifier">belongs_to_class_name</span>.<span class="ruby-identifier">singularize</span>.<span class="ruby-identifier">camelize</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">belongs_to_class_name</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/^[A-Z]/</span>
+ 94:         <span class="ruby-identifier">callback_method_name</span> = <span class="ruby-node">&quot;set_#{options[:attribute]}_on_#{event.name}&quot;</span>
+ 95: 
+ 96:         <span class="ruby-identifier">line_no</span> = <span class="ruby-keyword kw">__LINE__</span> <span class="ruby-operator">+</span> <span class="ruby-value">2</span>
+ 97:         <span class="ruby-identifier">method_definitions</span> = <span class="ruby-value str">&quot;belongs_to(:\#{options[:stamper_name]},\n:class_name =&gt; '\#{belongs_to_class_name}',\n:foreign_key =&gt; '\#{options[:attribute].to_s}')\n\n\#{options[:actual_hook] || event.actual_hook} :\#{callback_method_name}\n\ndef \#{callback_method_name}\nif MagicUserstamp.config.verbose?(self.class, \&quot;\#{options[:attribute]}\&quot;) &amp;&amp; !self.record_userstamp\nlogger.debug(\&quot;aborting \#{self.name}.\#{callback_method_name} cause of record_userstamp is \#{self.record_userstamp.inspect}\&quot;)\nend\nreturn unless self.record_userstamp\nif RAILS_ENV == 'development'\n@@\#{options[:attribute]}_stamper_class = \&quot;\#{options[:stamper_class_name]}\&quot;.constantize\nelse\n@@\#{options[:attribute]}_stamper_class ||= \&quot;\#{options[:stamper_class_name]}\&quot;.constantize\nend\nstamper_class = @@\#{options[:attribute]}_stamper_class\nstamper_class.model_stamper if stamper_class\nstamper = stamper_class.stamper if stamper_class\nsend(\&quot;\#{options[:attribute]}=\&quot;, stamper) if stamper\n\#{event.after_callback}\nend\n&quot;</span>
+ 98:         <span class="ruby-keyword kw">if</span> <span class="ruby-constant">MagicUserstamp</span>.<span class="ruby-identifier">config</span>.<span class="ruby-identifier">verbose?</span>(<span class="ruby-keyword kw">self</span>, <span class="ruby-identifier">options</span>[<span class="ruby-identifier">:attribute</span>])
+ 99:           <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-value str">&quot;=&quot;</span> <span class="ruby-operator">*</span> <span class="ruby-value">100</span>
+100:           <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">name</span>
+101:           <span class="ruby-constant">ActiveRecord</span><span class="ruby-operator">::</span><span class="ruby-constant">Base</span>.<span class="ruby-identifier">logger</span>.<span class="ruby-identifier">debug</span> <span class="ruby-identifier">method_definitions</span>
+102:         <span class="ruby-keyword kw">end</span>
+103:         <span class="ruby-identifier">module_eval</span>(<span class="ruby-identifier">method_definitions</span>, <span class="ruby-keyword kw">__FILE__</span>, <span class="ruby-identifier">line_no</span>)
+104:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
+
+        <div class="method-heading">
+          <a href="#M000015" class="method-signature">
+          <span class="method-name">without_stamps</span><span class="method-args">() {|| ...}</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Temporarily allows you to turn stamping off. For example:
+</p>
+<pre>
+  Post.without_stamps do
+    post = Post.find(params[:id])
+    post.update_attributes(params[:post])
+    post.save
+  end
+</pre>
+          <p><a class="source-toggle" href="#"
+            onclick="toggleCode('M000015-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000015-source">
+<pre>
+     <span class="ruby-comment cmt"># File lib/magic_userstamp/stampable.rb, line 137</span>
+137:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">without_stamps</span>
+138:         <span class="ruby-identifier">original_value</span> = <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">record_userstamp</span>
+139:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">record_userstamp</span> = <span class="ruby-keyword kw">false</span>
+140:         <span class="ruby-keyword kw">begin</span>
+141:           <span class="ruby-keyword kw">yield</span>
+142:         <span class="ruby-keyword kw">ensure</span>
+143:           <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">record_userstamp</span> = <span class="ruby-identifier">original_value</span>
+144:         <span class="ruby-keyword kw">end</span>
+145:       <span class="ruby-keyword kw">end</span>
+</pre>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

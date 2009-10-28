@@ -17,19 +17,58 @@ Or install gem manually
  $ sudo gem tumble
  $ sudo gem install magic_userstamp
 
-== Setting
+== Simple Configuration
 make config/initializers/magic_userstamp.rb
 
 The most simple setting
- Userstamp::Config.setup.defaults
+ require 'magic_userstamp'
+ # Comment out if you don't use t.userstamp at all in migrations
+ ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, MagicUserstamp::MigrationHelper)
+ ActiveRecord::Base.module_eval do
+   include MagicUserstamp
+ end
+
+ MagicUserstamp::Config.setup.defaults
+
+ # If you have some classes which has loaded before Userstamp is loaded,
+ # set record_userstamp true
+ # Example: vestal_versions gem
+ # Version.record_userstamp = true if defined?(Version)
+
+
+== Controller setting
+
+add followings to ApplicationController or some controller
+
+  before_filter :set_user
+  after_filter :reset_user
+
+ def set_user
+   user_id = session[:user] # ここではIDが帰ってくるはず。
+   User.model_stamper       # UserがIDを覚えられるようにする。
+   User.stamper = user_id   # IDを覚えておく。stamper=にはオブジェクトを渡してもOK。
+ end
+
+ def reset_user
+   User.model_stamper  # Userが覚えているIDを忘れることができるようにする。
+   User.reset_stamper  # Userが覚えているIDを実際に忘れる。
+ end
+
+
+
+== Various Configuration
+If you want to customize setting, chage config/initializers/magic_userstamp.rb
+
+The most simple setting
+ MagicUserstamp::Config.setup.defaults
 
 Specify User class name
- Userstamp::Config.setup.defaults(:stamper_class_name => 'AdminUser')
+ MagicUserstamp::Config.setup.defaults(:stamper_class_name => 'AdminUser')
 
 Actually
- Userstamp::Config.setup.defaults
+ MagicUserstamp::Config.setup.defaults
 means
- Userstamp.config.setup do |config|
+ MagicUserstamp.config.setup do |config|
    config.with_options(:stamper_class_name => 'User') do |c|
      c.on(:create , :creator_id)
      c.on(:update , :updater_id)
@@ -39,7 +78,7 @@ means
 
 
 Specify User class name and creator/updater columns
- Userstamp.config.setup do |config|
+ MagicUserstamp.config.setup do |config|
    config.with_options(:stamper_class_name => 'Person') do |c|
      c.on(:create , :creator_person_id)
      c.on(:update , :updater_person_id)
@@ -48,17 +87,42 @@ Specify User class name and creator/updater columns
  end
 
 Specify target stampable class names
- Userstamp.config.setup do |config|
+ MagicUserstamp.config.setup do |config|
    config.defaults(:stampable_class_names => %w(Book Schedule))
 
 Specify target stampable class names and columns
- Userstamp.config.setup do |config|
+ MagicUserstamp.config.setup do |config|
    config.with_options(:stampable_class_names => %w(Book Schedule)) do |c|
      c.on(:create , :creator_user_id)
      c.on(:update , :updater_user_id)
      c.on(:destroy, :deleter_user_id)
    end
  end
+
+
+Use in compatibility mode
+ MagicUserstamp.config.compatibles
+
+Same as
+ MagicUserstamp.config.setup do |c|
+   c.on(:create , :created_by)
+   c.on(:update , :updated_by)
+   c.on(:destroy, :deleted_by)
+ end
+
+
+
+Complex pattern
+ MagicUserstamp.config.setup do |config|
+   config.with_options(:stampable_class_names => %w(Book Schedule)) do |c|
+     c.on(:create , :creator_user_id)
+     c.on(:update , :updater_user_id)
+     c.on(:destroy, :deleter_user_id)
+   end
+   config.compatibles(:stamper_class_name => 'Person', :stampable_class_names => %w(Person Email))
+   config.defaults
+ end
+
 
 -----
 Copyright (c) 2009 'Takeshi AKIMA, released under the MIT license

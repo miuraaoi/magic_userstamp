@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>Module: Ddb::Userstamp::Stamper::ClassMethods</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>Module: MagicUserstamp::Stamper::ClassMethods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Script-Type" content="text/javascript" />
-  <link rel="stylesheet" href="../../../.././rdoc-style.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
   <script type="text/javascript">
   // <![CDATA[
 
@@ -50,13 +50,13 @@
         <table class="header-table">
         <tr class="top-aligned-row">
           <td><strong>Module</strong></td>
-          <td class="class-name-in-header">Ddb::Userstamp::Stamper::ClassMethods</td>
+          <td class="class-name-in-header">MagicUserstamp::Stamper::ClassMethods</td>
         </tr>
         <tr class="top-aligned-row">
             <td><strong>In:</strong></td>
             <td>
-                <a href="../../../../files/lib/stamper_rb.html">
-                lib/stamper.rb
+                <a href="../../../files/lib/magic_userstamp/stamper_rb.html">
+                lib/magic_userstamp/stamper.rb
                 </a>
         <br />
             </td>
@@ -80,7 +80,7 @@
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000001">model_stamper</a>&nbsp;&nbsp;
+      <a href="#M000003">model_stamper</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -102,26 +102,26 @@
     <div id="methods">
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000001" class="method-detail">
-        <a name="M000001"></a>
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
 
         <div class="method-heading">
-          <a href="#M000001" class="method-signature">
+          <a href="#M000003" class="method-signature">
           <span class="method-name">model_stamper</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p><a class="source-toggle" href="#"
-            onclick="toggleCode('M000001-source');return false;">[Source]</a></p>
-          <div class="method-source-code" id="M000001-source">
+            onclick="toggleCode('M000003-source');return false;">[Source]</a></p>
+          <div class="method-source-code" id="M000003-source">
 <pre>
-    <span class="ruby-comment cmt"># File lib/stamper.rb, line 9</span>
- 9:         <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">model_stamper</span>
-10:           <span class="ruby-comment cmt"># don't allow multiple calls</span>
-11:           <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">included_modules</span>.<span class="ruby-identifier">include?</span>(<span class="ruby-constant">Ddb</span><span class="ruby-operator">::</span><span class="ruby-constant">Userstamp</span><span class="ruby-operator">::</span><span class="ruby-constant">Stamper</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceMethods</span>)
-12:           <span class="ruby-identifier">send</span>(<span class="ruby-identifier">:extend</span>, <span class="ruby-constant">Ddb</span><span class="ruby-operator">::</span><span class="ruby-constant">Userstamp</span><span class="ruby-operator">::</span><span class="ruby-constant">Stamper</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceMethods</span>)
-13:         <span class="ruby-keyword kw">end</span>
+    <span class="ruby-comment cmt"># File lib/magic_userstamp/stamper.rb, line 10</span>
+10:       <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">model_stamper</span>
+11:         <span class="ruby-comment cmt"># don't allow multiple calls</span>
+12:         <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">is_a?</span>(<span class="ruby-constant">MagicUserstamp</span><span class="ruby-operator">::</span><span class="ruby-constant">Stamper</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceMethods</span>)
+13:         <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">extend</span>(<span class="ruby-constant">MagicUserstamp</span><span class="ruby-operator">::</span><span class="ruby-constant">Stamper</span><span class="ruby-operator">::</span><span class="ruby-constant">InstanceMethods</span>)
+14:       <span class="ruby-keyword kw">end</span>
 </pre>
           </div>
         </div>

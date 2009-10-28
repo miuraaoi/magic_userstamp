@@ -1,0 +1,268 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>File: README.rdoc</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+  <div id="fileHeader">
+    <h1>README.rdoc</h1>
+    <table class="header-table">
+    <tr class="top-aligned-row">
+      <td><strong>Path:</strong></td>
+      <td>README.rdoc
+      </td>
+    </tr>
+    <tr class="top-aligned-row">
+      <td><strong>Last Update:</strong></td>
+      <td>Wed Oct 28 19:22:06 +0900 2009</td>
+    </tr>
+    </table>
+  </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1><a href="../classes/MagicUserstamp.html">MagicUserstamp</a></h1>
+<h2>Install</h2>
+<h3>as a plugin</h3>
+<pre>
+ ruby script/plugin install git://github.com/akm/magic_userstamp.git
+</pre>
+<h3>as a gem</h3>
+<p>
+insert following line to config/environment.rb
+</p>
+<pre>
+  config.gem 'magic_userstamp', :version =&gt; '0.1.0'
+</pre>
+<p>
+and
+</p>
+<pre>
+ $ sudo rake gems:install
+</pre>
+<p>
+Or install gem manually
+</p>
+<pre>
+ $ sudo gem install gemcutter
+ $ sudo gem tumble
+ $ sudo gem install magic_userstamp
+</pre>
+<h2>Simple Configuration</h2>
+<p>
+make config/initializers/magic_userstamp.rb
+</p>
+<p>
+The most simple setting
+</p>
+<pre>
+ require 'magic_userstamp'
+ # Comment out if you don't use t.userstamp at all in migrations
+ ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, MagicUserstamp::MigrationHelper)
+ ActiveRecord::Base.module_eval do
+   include MagicUserstamp
+ end
+
+ MagicUserstamp::Config.setup.defaults
+
+ # If you have some classes which has loaded before Userstamp is loaded,
+ # set record_userstamp true
+ # Example: vestal_versions gem
+ # Version.record_userstamp = true if defined?(Version)
+</pre>
+<h2>Controller setting</h2>
+<p>
+add followings to ApplicationController or some controller
+</p>
+<pre>
+  before_filter :set_user
+  after_filter :reset_user
+
+ def set_user
+   user_id = session[:user] # ここではIDが帰ってくるはず。
+   User.model_stamper       # UserがIDを覚えられるようにする。
+   User.stamper = user_id   # IDを覚えておく。stamper=にはオブジェクトを渡してもOK。
+ end
+
+ def reset_user
+   User.model_stamper  # Userが覚えているIDを忘れることができるようにする。
+   User.reset_stamper  # Userが覚えているIDを実際に忘れる。
+ end
+</pre>
+<h2>Various Configuration</h2>
+<p>
+If you want to customize setting, chage
+config/initializers/magic_userstamp.rb
+</p>
+<p>
+The most simple setting
+</p>
+<pre>
+ MagicUserstamp::Config.setup.defaults
+</pre>
+<p>
+Specify User class name
+</p>
+<pre>
+ MagicUserstamp::Config.setup.defaults(:stamper_class_name =&gt; 'AdminUser')
+</pre>
+<p>
+Actually
+</p>
+<pre>
+ MagicUserstamp::Config.setup.defaults
+</pre>
+<p>
+means
+</p>
+<pre>
+ MagicUserstamp.config.setup do |config|
+   config.with_options(:stamper_class_name =&gt; 'User') do |c|
+     c.on(:create , :creator_id)
+     c.on(:update , :updater_id)
+     c.on(:destroy, :deleter_id)
+   end
+ end
+</pre>
+<p>
+Specify User class name and creator/updater columns
+</p>
+<pre>
+ MagicUserstamp.config.setup do |config|
+   config.with_options(:stamper_class_name =&gt; 'Person') do |c|
+     c.on(:create , :creator_person_id)
+     c.on(:update , :updater_person_id)
+     c.on(:destroy, :deleter_person_id)
+   end
+ end
+</pre>
+<p>
+Specify target stampable class names
+</p>
+<pre>
+ MagicUserstamp.config.setup do |config|
+   config.defaults(:stampable_class_names =&gt; %w(Book Schedule))
+</pre>
+<p>
+Specify target stampable class names and columns
+</p>
+<pre>
+ MagicUserstamp.config.setup do |config|
+   config.with_options(:stampable_class_names =&gt; %w(Book Schedule)) do |c|
+     c.on(:create , :creator_user_id)
+     c.on(:update , :updater_user_id)
+     c.on(:destroy, :deleter_user_id)
+   end
+ end
+</pre>
+<p>
+Use in compatibility mode
+</p>
+<pre>
+ MagicUserstamp.config.compatibles
+</pre>
+<p>
+Same as
+</p>
+<pre>
+ MagicUserstamp.config.setup do |c|
+   c.on(:create , :created_by)
+   c.on(:update , :updated_by)
+   c.on(:destroy, :deleted_by)
+ end
+</pre>
+<p>
+Complex pattern
+</p>
+<pre>
+ MagicUserstamp.config.setup do |config|
+   config.with_options(:stampable_class_names =&gt; %w(Book Schedule)) do |c|
+     c.on(:create , :creator_user_id)
+     c.on(:update , :updater_user_id)
+     c.on(:destroy, :deleter_user_id)
+   end
+   config.compatibles(:stamper_class_name =&gt; 'Person', :stampable_class_names =&gt; %w(Person Email))
+   config.defaults
+ end
+</pre>
+
+    </div>
+
+
+   </div>
+
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

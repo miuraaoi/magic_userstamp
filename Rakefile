@@ -40,6 +40,7 @@ Rake::RDocTask.new do |rdoc|
 
   rdoc.rdoc_dir = 'rdoc'
   rdoc.title = "magic_userstamp #{version}"
-  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('README.rdoc')
   rdoc.rdoc_files.include('lib/**/*.rb')
+  rdoc.options = ["--charset", "utf-8", "--line-numbers"]
 end

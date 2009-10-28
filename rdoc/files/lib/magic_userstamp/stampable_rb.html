@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="iso-8859-1"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html 
      PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 <head>
-  <title>File: CHANGELOG</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <title>File: stampable.rb</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Script-Type" content="text/javascript" />
-  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
   <script type="text/javascript">
   // <![CDATA[
 
@@ -47,16 +47,16 @@
 
 
   <div id="fileHeader">
-    <h1>CHANGELOG</h1>
+    <h1>stampable.rb</h1>
     <table class="header-table">
     <tr class="top-aligned-row">
       <td><strong>Path:</strong></td>
-      <td>CHANGELOG
+      <td>lib/magic_userstamp/stampable.rb
       </td>
     </tr>
     <tr class="top-aligned-row">
       <td><strong>Last Update:</strong></td>
-      <td>Sat Apr 05 11:41:29 -0600 2008</td>
+      <td>Wed Oct 28 18:28:56 +0900 2009</td>
     </tr>
     </table>
   </div>
@@ -68,43 +68,14 @@
 
   <div id="contextContent">
 
-    <div id="description">
-      <p>
-2.0 (2-17-2008)
-</p>
-<pre>
-    * [Ben  Wyrosdick] - Added a migration helper that gives migration scripts a &lt;tt&gt;userstamps&lt;/tt&gt;
-                         method.
-    * [Marshall Roch]  - Stamping can be temporarily turned off using the 'without_stamps' class
-                         method.
-      Example:
-        Post.without_stamps do
-          post = Post.find(params[:id])
-          post.update_attributes(params[:post])
-          post.save
-        end
 
-    * Models that should receive updates made by 'stampers' now use the acts_as_stampable class
-      method. This sets up the belongs_to relationships and also injects private methods for use by
-      the individual callback filter methods.
+    <div id="requires-list">
+      <h3 class="section-bar">Required files</h3>
 
-    * Models that are responsible for updating now use the acts_as_stamper class method. This
-      injects the stamper= and stamper methods that are thread safe and should be updated per
-      request by a controller.
-
-    * The Userstamp module is now meant to be included with one of your project's controllers (the
-      Application Controller is recommended). It creates a before filter called 'set_stampers' that
-      is responsible for setting all the current Stampers.
-</pre>
-<p>
-1.0 (01-18-2006)
-</p>
-<pre>
-    * Initial Release
-</pre>
-
+      <div class="name-list">
+      magic_userstamp&nbsp;&nbsp;
+      </div>
     </div>
-
 
    </div>
 

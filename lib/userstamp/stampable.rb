@@ -93,6 +93,7 @@ module Userstamp
         belongs_to_class_name = belongs_to_class_name.singularize.camelize unless belongs_to_class_name =~ /^[A-Z]/
         callback_method_name = "set_#{options[:attribute]}_on_#{event.name}"
 
+        line_no = __LINE__ + 2
         method_definitions = <<-"EOS"
           belongs_to(:#{options[:stamper_name]},
             :class_name => '#{belongs_to_class_name}',
@@ -101,8 +102,15 @@ module Userstamp
           #{options[:actual_hook] || event.actual_hook} :#{callback_method_name}
 
           def #{callback_method_name}
+            if Userstamp.config.verbose?(self.class, "#{options[:attribute]}") && !self.record_userstamp
+              logger.debug("aborting #{self.name}.#{callback_method_name} cause of record_userstamp is nil/false")
+            end
             return unless self.record_userstamp
-            @@#{options[:attribute]}_stamper_class ||= "#{options[:stamper_class_name]}".constantize
+            if RAILS_ENV == 'development'
+              @@#{options[:attribute]}_stamper_class = "#{options[:stamper_class_name]}".constantize
+            else
+              @@#{options[:attribute]}_stamper_class ||= "#{options[:stamper_class_name]}".constantize
+            end
             stamper_class = @@#{options[:attribute]}_stamper_class
             stamper_class.model_stamper if stamper_class
             stamper = stamper_class.stamper if stamper_class
@@ -110,12 +118,12 @@ module Userstamp
             #{event.after_callback}
           end
         EOS
-        if Userstamp.config.verbose
-          puts "=" * 100
-          puts self.name
-          puts method_definitions
+        if Userstamp.config.verbose?(self, options[:attribute])
+          ActiveRecord::Base.logger.debug "=" * 100
+          ActiveRecord::Base.logger.debug self.name
+          ActiveRecord::Base.logger.debug method_definitions
         end
-        module_eval(method_definitions, __FILE__, __LINE__)
+        module_eval(method_definitions, __FILE__, line_no)
       end
 
       # Temporarily allows you to turn stamping off. For example:

@@ -3,6 +3,10 @@ require 'userstamp'
 
 module Userstamp
 
+  def self.config
+    Config.instance
+  end
+  
   class Config
 
     class << self
@@ -52,6 +56,34 @@ module Userstamp
       on(:destroy, :deleted_by, options) if with_destroy
     end
 
+    def verbose?(klass, column_name)
+      case verbose
+      when Hash then
+        verbose_match?(verbose, klass, column_name)
+      when Array then
+        verbose.any?{|setting| verbose_match?(setting, klass, column_name)}
+      else
+        !!verbose
+      end
+    end
+
+    private
+
+    def verbose_match?(setting, klass, column_name)
+      classes = []
+      columns = []
+      {:classes => classes, :columns => columns}.each do |key, dest|
+        if value = setting[key]
+          dest.concat(value.is_a?(Array) ? value : [value])
+        end
+      end
+      classes = classes.map{|s| s.to_s}
+      columns = columns.map{|s| s.to_s}
+      (classes.empty? || classes.include?(klass.name)) && 
+        (columns.empty? || columns.include?(column_name.to_s))
+    end
+ 
+     
     class Pattern
       attr_reader :event_name, :column_name, :stampable_class_names
       attr_reader :stamper_class_name, :stamper_attr_name

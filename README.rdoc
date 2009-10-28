@@ -3,8 +3,8 @@
 == About MagicUserstamp
 This plugin is a fork of delynn/userstamp ( http://github.com/delynn/userstamp )
 
-But almost of classes have been changed. And you can use creator_id, updater_id or deleter_id (with acts_as_paranod)
-without definition in each model. Instead of them, you can write just config/initializers/magic_userstamp.rb .
+But almost of classes have been changed. And you can use creator_id, updater_id or deleter_id (with acts_as_paranod) easiliy.
+It is enough to write config/initializers/magic_userstamp.rb only instead of definition in each model.
 
 == Install
 

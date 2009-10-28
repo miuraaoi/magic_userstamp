@@ -1,8 +1,8 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe Userstamp do
+describe MagicUserstamp do
 
-  Userstamp.compatibility_mode = true
+  MagicUserstamp.compatibility_mode = true
   
   class CompatiblePerson < ActiveRecord::Base
     set_table_name('people')
@@ -15,7 +15,7 @@ describe Userstamp do
     belongs_to  :post
    end
 
-  Userstamp.compatibility_mode = false
+  MagicUserstamp.compatibility_mode = false
   
   fixtures :people, :comments 
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
 
   class Config
 
@@ -97,7 +97,7 @@ module Userstamp
           :stamper_attr_name => nil # sholuld not be only 'id' but PK column name
         }.update(options || {})
         @stampable_class_names = options.delete(:stampable_class_names)
-        Userstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
+        MagicUserstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
         @options_for_stampable_on = options
         @stamper_class_name = options[:stamper_class_name]
         @stamper_attr_name = options[:stamper_attr_name]

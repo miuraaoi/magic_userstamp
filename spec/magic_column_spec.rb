@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe Userstamp do
+describe MagicUserstamp do
   
-  Userstamp::Config.setup do |config|
+  MagicUserstamp::Config.setup do |config|
     # config.verbose = true
 
     config.defaults(:stamper_class_name => 'MagicPerson', :stampable_class_names => %w(MagicPost))
@@ -44,7 +44,7 @@ describe Userstamp do
   end
 
   after(:all) do
-    Userstamp::Config.clear
+    MagicUserstamp::Config.clear
   end
   
   fixtures :users, :people, :posts
@@ -62,13 +62,13 @@ describe Userstamp do
     MagicPerson.stamper = @delynn
   end
 
-  it "Userstamp.config.pattern_for" do
-    Userstamp.config.patterns.length.should == 8
-    p1 = Userstamp.config.pattern_for(MagicUser, "creator_id")
+  it "MagicUserstamp.config.pattern_for" do
+    MagicUserstamp.config.patterns.length.should == 8
+    p1 = MagicUserstamp.config.pattern_for(MagicUser, "creator_id")
     p1.should_not be_nil
-    p2 = Userstamp.config.pattern_for(MagicPerson, "creator_id")
+    p2 = MagicUserstamp.config.pattern_for(MagicPerson, "creator_id")
     p2.should_not be_nil
-    p1 = Userstamp.config.pattern_for(MagicPost, "creator_id")
+    p1 = MagicUserstamp.config.pattern_for(MagicPost, "creator_id")
     p1.should_not be_nil
   end
   

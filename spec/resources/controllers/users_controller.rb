@@ -1,4 +1,4 @@
-class UsersController < UserstampController
+class UsersController < MagicUserstampController
   def edit
     @user = User.find(params[:id])
     render(:inline  => "<%= @user.name %>")

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
 
   module MagicColumns
     def self.included(mod)
@@ -35,7 +35,7 @@ module Userstamp
       end
 
       def setup_userstamp(columns)
-        config = Userstamp.config
+        config = MagicUserstamp.config
         columns.each do |column|
           next if column.primary
           if pattern = config.pattern_for(self, column.name)

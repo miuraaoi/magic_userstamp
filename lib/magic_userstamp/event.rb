@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
 
   class Event 
     attr_reader :name, :actor, :actual_hook, :after_callback
@@ -52,7 +52,7 @@ module Userstamp
 
       def raise_unless_valid_name(event_name)
         return if valid_name?(event_name)
-        raise UserstampError, "Invalid event name '#{event_name.inspect}'. Event name must be one of #{valid_names.inspect}"
+        raise MagicUserstampError, "Invalid event name '#{event_name.inspect}'. Event name must be one of #{valid_names.inspect}"
       end
     end
   end

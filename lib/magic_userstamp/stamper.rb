@@ -1,6 +1,6 @@
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
   module Stamper
     def self.included(base) # :nodoc:
       base.extend(ClassMethods)
@@ -9,13 +9,13 @@ module Userstamp
     module ClassMethods
       def model_stamper
         # don't allow multiple calls
-        return if self.is_a?(Userstamp::Stamper::InstanceMethods)
-        self.extend(Userstamp::Stamper::InstanceMethods)
+        return if self.is_a?(MagicUserstamp::Stamper::InstanceMethods)
+        self.extend(MagicUserstamp::Stamper::InstanceMethods)
       end
     end
 
     module InstanceMethods
-      # Used to set the stamper for a particular request. See the Userstamp module for more
+      # Used to set the stamper for a particular request. See the MagicUserstamp module for more
       # details on how to use this method.
       def stamper=(object)
         object_stamper = if object.is_a?(ActiveRecord::Base)

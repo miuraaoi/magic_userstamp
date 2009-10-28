@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
-require 'userstamp'
+require 'magic_userstamp'
 # コントローラへは自身でincludeしてください。
-# ActionController::Base.send(:include, Userstamp::Controller) if defined?(ActionController)
-ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, Userstamp::MigrationHelper)
+# ActionController::Base.send(:include, MagicUserstamp::Controller) if defined?(ActionController)
+ActiveRecord::ConnectionAdapters::TableDefinition.send(:include, MagicUserstamp::MigrationHelper)
 if defined?(ActiveRecord)
   ActiveRecord::Base.module_eval do
-    include Userstamp
+    include MagicUserstamp
   end
 end

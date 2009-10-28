@@ -1,4 +1,4 @@
-class PostsController < UserstampController
+class PostsController < MagicUserstampController
   def edit
     @post = Post.find(params[:id])
     render(:inline  => "<%= @post.title %>")

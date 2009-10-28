@@ -1,6 +1,6 @@
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
   module Controller
     # The Userstamp module, when included into a controller, adds a before filter
     # (named <tt>set_stamper</tt>) and an after filter (name <tt>reset_stamper</tt>).

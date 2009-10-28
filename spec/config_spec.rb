@@ -1,6 +1,6 @@
 require File.join(File.dirname(__FILE__), 'spec_helper')
 
-describe Userstamp::Config do
+describe MagicUserstamp::Config do
 
   class Foo
   end
@@ -13,7 +13,7 @@ describe Userstamp::Config do
 
 
   before(:each) do
-    @config = Userstamp::Config.new
+    @config = MagicUserstamp::Config.new
   end
 
   describe "on" do
@@ -122,10 +122,10 @@ describe Userstamp::Config do
     end
   end
 
-  describe Userstamp::Config::Pattern do
+  describe MagicUserstamp::Config::Pattern do
     describe "args_for_stampable_on" do
       
-      it "should return args to call Userstamp::Stampable.stampable_on" do
+      it "should return args to call MagicUserstamp::Stampable.stampable_on" do
         @config.defaults
         p1 = @config.pattern_for(Foo, "creator_id")
         p1.args_for_stampable_on.should == [:create, {
@@ -134,7 +134,7 @@ describe Userstamp::Config do
             :stamper_attr_name=>nil}]
       end
       
-      it "should return args to call Userstamp::Stampable.stampable_on with options" do
+      it "should return args to call MagicUserstamp::Stampable.stampable_on with options" do
         @config.on(:update, :updater_id, :actual_hook => :before_update, 
           :stamper_name => 'foo_updater', :stamper_class_name => 'Foo',
           :stamper_attr_name => 'cd')

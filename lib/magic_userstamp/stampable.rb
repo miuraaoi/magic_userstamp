@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-require 'userstamp'
+require 'magic_userstamp'
 
-module Userstamp
+module MagicUserstamp
   # Determines what default columns to use for recording the current stamper.
   # By default this is set to false, so the plug-in will use columns named
   # <tt>creator_id</tt>, <tt>updater_id</tt>, and <tt>deleter_id</tt>.
@@ -9,7 +9,7 @@ module Userstamp
   # To turn compatibility mode on, place the following line in your environment.rb
   # file:
   #
-  #   Userstamp.compatibility_mode = true
+  #   MagicUserstamp.compatibility_mode = true
   #
   # This will cause the plug-in to use columns named <tt>created_by</tt>,
   # <tt>updated_by</tt>, and <tt>deleted_by</tt>.
@@ -59,7 +59,7 @@ module Userstamp
       # The method will automatically setup all the associations, and create <tt>before_save</tt>
       # and <tt>before_create</tt> filters for doing the stamping.
       def stampable(options = {})
-        reader_name = Userstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
+        reader_name = MagicUserstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
         options  = {
           :stamper_class_name => "User",
           :creator_attribute  => Event[:create ].send(reader_name),
@@ -78,9 +78,9 @@ module Userstamp
       end
 
       def stampable_on(event_name, options = {})
-        Userstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
+        MagicUserstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
         event = Event[event_name]
-        reader_name = Userstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
+        reader_name = MagicUserstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
         options = {
           :stamper_name => event.actor,
           :stamper_class_name => "User",
@@ -102,7 +102,7 @@ module Userstamp
           #{options[:actual_hook] || event.actual_hook} :#{callback_method_name}
 
           def #{callback_method_name}
-            if Userstamp.config.verbose?(self.class, "#{options[:attribute]}") && !self.record_userstamp
+            if MagicUserstamp.config.verbose?(self.class, "#{options[:attribute]}") && !self.record_userstamp
               logger.debug("aborting #{self.name}.#{callback_method_name} cause of record_userstamp is #{self.record_userstamp.inspect}")
             end
             return unless self.record_userstamp
@@ -118,7 +118,7 @@ module Userstamp
             #{event.after_callback}
           end
         EOS
-        if Userstamp.config.verbose?(self, options[:attribute])
+        if MagicUserstamp.config.verbose?(self, options[:attribute])
           ActiveRecord::Base.logger.debug "=" * 100
           ActiveRecord::Base.logger.debug self.name
           ActiveRecord::Base.logger.debug method_definitions

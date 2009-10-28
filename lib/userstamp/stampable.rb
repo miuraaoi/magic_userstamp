@@ -25,12 +25,6 @@ module Userstamp
     :actual_hook
   ]
   
-  def self.raise_unless_valid_options_for_stampable_on(options)
-    return if options.nil?
-    invalid_keys = (options.keys - VALID_OPTIONS_KEYS_FOR_STAMPABLE_ON)
-    raise "Invalid options keys: #{invalid_keys.inspect}" unless invalid_keys.empty?
-  end
-
   # Extends the stamping functionality of ActiveRecord by automatically recording the model
   # responsible for creating, updating, and deleting the current object. See the Stamper
   # and Userstamp modules for further documentation on how the entire process works.
@@ -42,6 +36,12 @@ module Userstamp
         class_inheritable_accessor  :record_userstamp
         self.record_userstamp = true
       end
+    end
+
+    def self.raise_unless_valid_options_for_stampable_on(options)
+      return if options.nil?
+      invalid_keys = (options.keys - VALID_OPTIONS_KEYS_FOR_STAMPABLE_ON)
+      raise "Invalid options keys: #{invalid_keys.inspect}" unless invalid_keys.empty?
     end
 
     module ClassMethods
@@ -78,7 +78,7 @@ module Userstamp
       end
 
       def stampable_on(event_name, options = {})
-        Userstamp.raise_unless_valid_options_for_stampable_on(options)
+        Userstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
         event = Event[event_name]
         reader_name = Userstamp.compatibility_mode ? :default_attribute_compatible : :default_attribute
         options = {
@@ -103,7 +103,7 @@ module Userstamp
 
           def #{callback_method_name}
             if Userstamp.config.verbose?(self.class, "#{options[:attribute]}") && !self.record_userstamp
-              logger.debug("aborting #{self.name}.#{callback_method_name} cause of record_userstamp is nil/false")
+              logger.debug("aborting #{self.name}.#{callback_method_name} cause of record_userstamp is #{self.record_userstamp.inspect}")
             end
             return unless self.record_userstamp
             if RAILS_ENV == 'development'

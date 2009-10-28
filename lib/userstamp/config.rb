@@ -3,21 +3,15 @@ require 'userstamp'
 
 module Userstamp
 
-  def self.config
-    Config.instance
-  end
-  
   class Config
 
     class << self
       def instance
-        @instance || setup
+        @instance ||= Config.new
       end
       
-      def setup
-        @instance = Config.new
-        yield(@instance) if block_given?
-        @instance
+      def setup(&block)
+        instance.setup(&block)
       end
 
       def clear
@@ -34,6 +28,11 @@ module Userstamp
       @with_destroy = defined?(Caboose::Acts::Paranoid)
     end
     
+    def setup
+      yield(self) if block_given?
+      self
+    end
+
     def pattern_for(klass, column_name)
       patterns.detect{|pattern| pattern.stampable?(klass, column_name)}
     end
@@ -98,7 +97,7 @@ module Userstamp
           :stamper_attr_name => nil # sholuld not be only 'id' but PK column name
         }.update(options || {})
         @stampable_class_names = options.delete(:stampable_class_names)
-        Userstamp.raise_unless_valid_options_for_stampable_on(options)
+        Userstamp::Stampable.raise_unless_valid_options_for_stampable_on(options)
         @options_for_stampable_on = options
         @stamper_class_name = options[:stamper_class_name]
         @stamper_attr_name = options[:stamper_attr_name]

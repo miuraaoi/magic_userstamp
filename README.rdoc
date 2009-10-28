@@ -1,0 +1,64 @@
+= MagicUserstamp
+
+== Install
+
+=== as a plugin
+ ruby script/plugin install git://github.com/akm/magic_userstamp.git
+
+=== as a gem
+insert following line to config/environment.rb
+  config.gem 'magic_userstamp', :version => '0.1.0'
+and 
+ $ sudo rake gems:install
+
+Or install gem manually
+
+ $ sudo gem install gemcutter
+ $ sudo gem tumble
+ $ sudo gem install magic_userstamp
+
+== Setting
+make config/initializers/magic_userstamp.rb
+
+The most simple setting
+ Userstamp::Config.setup.defaults
+
+Specify User class name
+ Userstamp::Config.setup.defaults(:stamper_class_name => 'AdminUser')
+
+Actually
+ Userstamp::Config.setup.defaults
+means
+ Userstamp.config.setup do |config|
+   config.with_options(:stamper_class_name => 'User') do |c|
+     c.on(:create , :creator_id)
+     c.on(:update , :updater_id)
+     c.on(:destroy, :deleter_id)
+   end
+ end
+
+
+Specify User class name and creator/updater columns
+ Userstamp.config.setup do |config|
+   config.with_options(:stamper_class_name => 'Person') do |c|
+     c.on(:create , :creator_person_id)
+     c.on(:update , :updater_person_id)
+     c.on(:destroy, :deleter_person_id)
+   end
+ end
+
+Specify target stampable class names
+ Userstamp.config.setup do |config|
+   config.defaults(:stampable_class_names => %w(Book Schedule))
+
+Specify target stampable class names and columns
+ Userstamp.config.setup do |config|
+   config.with_options(:stampable_class_names => %w(Book Schedule)) do |c|
+     c.on(:create , :creator_user_id)
+     c.on(:update , :updater_user_id)
+     c.on(:destroy, :deleter_user_id)
+   end
+ end
+
+-----
+Copyright (c) 2009 'Takeshi AKIMA, released under the MIT license

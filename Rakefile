@@ -1,55 +1,45 @@
 require 'rubygems'
-gem 'rspec', '>= 1.1.4'
 require 'rake'
-require 'rake/rdoctask'
-require 'spec/rake/spectask'
-require 'spec/rake/verify_rcov'
- 
-desc 'Default: run unit tests.'
-task :default => :spec
- 
-task :pre_commit => [:spec, 'coverage:verify']
- 
-desc 'Run all specs under spec/**/*_spec.rb'
-Spec::Rake::SpecTask.new(:spec => 'coverage:clean') do |t|
-  t.spec_files = FileList['spec/**/*_spec.rb']
-  t.spec_opts = ['--options', 'spec/spec.opts']
-  t.rcov_dir = 'coverage'
-  t.rcov = true
-  # t.rcov_opts = ["--include-file", "lib\/*\.rb", "--exclude", "spec\/"]
-  t.rcov_opts = ["--exclude", "spec\/"]
-end
- 
-desc 'Generate documentation for the magic_userstamp plugin.'
-Rake::RDocTask.new(:rdoc) do |rdoc|
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title    = 'MagicUserstamp'
-  rdoc.options << '--line-numbers' << '--inline-source' << '-c UTF-8'
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
- 
-namespace :coverage do
-  desc "Delete aggregate coverage data."
-  task(:clean) { rm_f "coverage" }
- 
-  desc "verify coverage threshold via RCov"
-  RCov::VerifyTask.new(:verify => :spec) do |t|
-    t.threshold = 100.0 # Make sure you have rcov 0.7 or higher!
-    t.index_html = 'coverage/index.html'
-  end
-end
 
 begin
   require 'jeweler'
-  Jeweler::Tasks.new do |s|
-    s.name = "magic_userstamp"
-    s.summary  = "magic_userstamp deals creator_id, updater_id and deleter_id automatically"
-    s.description  = "magic_userstamp deals creator_id, updater_id and deleter_id automatically"
-    s.email    = "akima@gmail.com"
-    s.homepage = "http://github.com/akm/magic_userstamp/"
-    s.authors  = ["Takeshi Akima"]
+  Jeweler::Tasks.new do |gem|
+    gem.name = "magic_userstamp"
+    gem.summary = %Q{creator_id/updater_id/deleter_id support with setting outside models}
+    gem.description = %Q{This Rails plugin extends ActiveRecord::Base to add automatic updating of created_by and updated_by attributes of your models in much the same way that the ActiveRecord::Timestamp module updates created_(at/on) and updated_(at/on) attributes.}
+    gem.email = "akm2000@gmail.com"
+    gem.homepage = "http://github.com/akm/magic_userstamp"
+    gem.authors = ["akimatter"]
+    gem.add_development_dependency "rspec", ">= 1.2.9"
+    # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
+  Jeweler::GemcutterTasks.new
 rescue LoadError
-  puts "Jeweler not available. Install it with: sudo gem install technicalpickles-jeweler -s http://gems.github.com"
+  puts "Jeweler (or a dependency) not available. Install it with: sudo gem install jeweler"
+end
+
+require 'spec/rake/spectask'
+Spec::Rake::SpecTask.new(:spec) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.spec_files = FileList['spec/**/*_spec.rb']
+end
+
+Spec::Rake::SpecTask.new(:rcov) do |spec|
+  spec.libs << 'lib' << 'spec'
+  spec.pattern = 'spec/**/*_spec.rb'
+  spec.rcov = true
+end
+
+task :spec => :check_dependencies
+
+task :default => :spec
+
+require 'rake/rdoctask'
+Rake::RDocTask.new do |rdoc|
+  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+
+  rdoc.rdoc_dir = 'rdoc'
+  rdoc.title = "magic_userstamp #{version}"
+  rdoc.rdoc_files.include('README*')
+  rdoc.rdoc_files.include('lib/**/*.rb')
 end

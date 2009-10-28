@@ -1,4 +1,5 @@
-*.log
 *.*~
+*.log
 *.sqlite3
 /coverage
+/pkg

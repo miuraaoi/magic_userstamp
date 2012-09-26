@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-$KCODE='u'
+# $KCODE='u'
 
 ENV['RAILS_ENV'] ||= 'test'
 unless defined?(RAILS_ENV)
-  RAILS_ENV = 'test' 
+  RAILS_ENV = 'test'
   RAILS_ROOT = File.dirname(__FILE__) unless defined?(RAILS_ROOT)
 
   require 'rubygems'
-  require 'spec'
+  # require 'spec'
 
   require 'active_support'
   require 'active_record'
@@ -22,7 +22,7 @@ unless defined?(RAILS_ENV)
   ActiveRecord::Base.logger = Logger.new(File.join(File.dirname(__FILE__), 'debug.log'))
   ActionController::Base.logger = ActiveRecord::Base.logger
   ActiveRecord::Base.establish_connection(config[ENV['DB'] || 'sqlite3'])
-  
+
   load(File.join(File.dirname(__FILE__), 'schema.rb'))
 
   ActionController::Routing::Routes.draw do |map|

@@ -24,7 +24,7 @@ module MagicUserstamp
     :attribute,
     :actual_hook
   ]
-  
+
   # Extends the stamping functionality of ActiveRecord by automatically recording the model
   # responsible for creating, updating, and deleting the current object. See the Stamper
   # and Userstamp modules for further documentation on how the entire process works.
@@ -33,7 +33,7 @@ module MagicUserstamp
       base.extend(ClassMethods)
       base.class_eval do
         # Should ActiveRecord record userstamps? Defaults to true.
-        class_inheritable_accessor  :record_userstamp
+        class_attribute :record_userstamp
         self.record_userstamp = true
       end
     end
@@ -106,7 +106,7 @@ module MagicUserstamp
               logger.debug("aborting #{self.name}.#{callback_method_name} cause of record_userstamp is #{self.record_userstamp.inspect}")
             end
             return unless self.record_userstamp
-            if RAILS_ENV == 'development'
+            if ::Rails.env == 'development'
               @@#{options[:attribute]}_stamper_class = "#{options[:stamper_class_name]}".constantize
             else
               @@#{options[:attribute]}_stamper_class ||= "#{options[:stamper_class_name]}".constantize
